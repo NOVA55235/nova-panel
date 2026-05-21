@@ -1,0 +1,39 @@
+################################################################
+# Nova Panel — Nginx override (domain + SSL)
+#
+# Usage:
+#   docker compose -f docker-compose.yml -f docker-compose.nginx.yml up -d
+#
+# Before running:
+#   1. Set DOMAIN=panel.yourdomain.com in your .env
+#   2. Run certbot once (see README) to get certs, OR
+#      place cert.pem + key.pem in ./nginx/ssl/
+################################################################
+
+version: "3.9"
+
+services:
+
+  # Override panel to only listen on localhost (nginx proxies to it)
+  panel:
+    ports: !reset []
+    expose:
+      - "3000"
+
+  # ── Nginx ────────────────────────────────────────────────────
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: nova-panel-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nova-panel.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - nginx_logs:/var/log/nginx
+    depends_on:
+      - panel
+
+volumes:
+  nginx_logs:
