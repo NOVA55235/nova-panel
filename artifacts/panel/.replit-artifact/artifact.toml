@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "GamePanel"
+version = "1.0.0"
+id = "artifacts/panel"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 19076
+
+[services.development]
+run = "pnpm --filter @workspace/panel run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/panel", "run", "build" ]
+publicDir = "artifacts/panel/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "19076"
+BASE_PATH = "/"

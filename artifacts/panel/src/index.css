@@ -1,0 +1,318 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-card-border: hsl(var(--card-border));
+
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-popover-border: hsl(var(--popover-border));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-primary-border: var(--primary-border);
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-secondary-border: var(--secondary-border);
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-muted-border: var(--muted-border);
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-accent-border: var(--accent-border);
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-destructive-border: var(--destructive-border);
+
+  --color-chart-1: hsl(var(--chart-1));
+  --color-chart-2: hsl(var(--chart-2));
+  --color-chart-3: hsl(var(--chart-3));
+  --color-chart-4: hsl(var(--chart-4));
+  --color-chart-5: hsl(var(--chart-5));
+
+  --color-sidebar: hsl(var(--sidebar));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-primary-border: var(--sidebar-primary-border);
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-accent-border: var(--sidebar-accent-border);
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+
+  --font-sans: var(--app-font-sans);
+  --font-serif: var(--app-font-serif);
+  --font-mono: var(--app-font-mono);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root, .dark {
+  --button-outline: rgba(255,255,255, .07);
+  --badge-outline: rgba(255,255,255, .04);
+  --opaque-button-border-intensity: 8;
+  --elevate-1: rgba(255,255,255, .025);
+  --elevate-2: rgba(255,255,255, .06);
+
+  /* ════════════════════════════════════════════
+     NOVA PANEL — EVEREST NODE THEME
+     Inspired by: glacial ice, deep mountain nights
+     ════════════════════════════════════════════ */
+
+  /* Background: deep cold navy, like night at altitude */
+  --background: 220 28% 6%;
+  --foreground: 210 30% 92%;
+  --border: 220 20% 13%;
+  --input: 220 22% 10%;
+  --ring: 198 92% 54%;
+
+  /* Cards: elevated layer */
+  --card: 220 24% 9%;
+  --card-foreground: 210 30% 92%;
+  --card-border: 220 20% 14%;
+
+  /* Popovers */
+  --popover: 220 24% 10%;
+  --popover-foreground: 210 30% 92%;
+  --popover-border: 220 20% 15%;
+
+  /* PRIMARY — glacier cyan / ice blue (Everest signature color) */
+  --primary: 198 92% 54%;
+  --primary-foreground: 220 28% 6%;
+
+  --secondary: 220 20% 13%;
+  --secondary-foreground: 210 20% 82%;
+
+  --muted: 220 20% 11%;
+  --muted-foreground: 215 18% 52%;
+
+  /* Accent: soft violet highlight */
+  --accent: 245 75% 65%;
+  --accent-foreground: 0 0% 100%;
+
+  --destructive: 0 68% 56%;
+  --destructive-foreground: 0 0% 100%;
+
+  /* Sidebar: the coldest, darkest layer */
+  --sidebar: 220 32% 5%;
+  --sidebar-foreground: 215 20% 65%;
+  --sidebar-border: 220 22% 10%;
+  --sidebar-primary: 198 92% 54%;
+  --sidebar-primary-foreground: 220 28% 6%;
+  --sidebar-accent: 220 22% 10%;
+  --sidebar-accent-foreground: 210 30% 90%;
+  --sidebar-ring: 198 92% 54%;
+
+  /* Charts */
+  --chart-1: 198 92% 54%;
+  --chart-2: 245 75% 65%;
+  --chart-3: 142 60% 48%;
+  --chart-4: 38 88% 56%;
+  --chart-5: 0 68% 56%;
+
+  --app-font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --app-font-serif: Georgia, serif;
+  --app-font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+  --radius: 0.4rem;
+
+  --sidebar-primary-border: hsl(var(--sidebar-primary));
+  --sidebar-accent-border: hsl(var(--sidebar-accent));
+  --primary-border: hsl(var(--primary));
+  --secondary-border: hsl(var(--secondary));
+  --muted-border: hsl(var(--muted));
+  --accent-border: hsl(var(--accent));
+  --destructive-border: hsl(var(--destructive));
+}
+
+@layer base {
+  * { @apply border-border; }
+  body { @apply font-sans antialiased bg-background text-foreground; }
+
+  /* Everest custom scrollbar — icy thin rail */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(198 92% 54% / 0.25);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(198 92% 54% / 0.5);
+  }
+  * { scrollbar-width: thin; scrollbar-color: hsl(198 92% 54% / 0.25) transparent; }
+}
+
+/* ── Pterodactyl-style active nav — left border glow ── */
+.nav-item-active {
+  position: relative;
+  background: hsl(var(--sidebar-primary) / 0.10) !important;
+  color: hsl(var(--sidebar-primary)) !important;
+}
+.nav-item-active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 3px;
+  bottom: 3px;
+  width: 2.5px;
+  background: hsl(var(--sidebar-primary));
+  border-radius: 0 2px 2px 0;
+  box-shadow: 0 0 8px hsl(var(--sidebar-primary) / 0.6);
+}
+
+/* ── Panel background overlay (set via JS) ── */
+#nova-panel-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  transition: opacity 0.4s ease;
+}
+
+/* ── Everest glow effects on primary buttons ── */
+.everest-glow {
+  box-shadow: 0 0 20px hsl(198 92% 54% / 0.35), 0 0 60px hsl(198 92% 54% / 0.10);
+}
+
+/* ── Card hover — subtle glacier lift ── */
+.card-hover {
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.25s ease;
+}
+.card-hover:hover {
+  border-color: hsl(198 92% 54% / 0.4);
+  box-shadow: 0 8px 32px hsl(198 92% 54% / 0.12);
+  transform: translateY(-2px);
+}
+
+/* ════════════════════════════════════════════
+   ANIMATIONS — panel-wide motion library
+   ════════════════════════════════════════════ */
+
+@keyframes nova-fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes nova-fade-in-scale {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes nova-slide-in-left {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes nova-pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 hsl(198 92% 54% / 0.4); }
+  50% { box-shadow: 0 0 24px 6px hsl(198 92% 54% / 0); }
+}
+@keyframes nova-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes nova-float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+.anim-fade-in { animation: nova-fade-in 0.45s ease-out both; }
+.anim-fade-scale { animation: nova-fade-in-scale 0.4s ease-out both; }
+.anim-slide-left { animation: nova-slide-in-left 0.4s ease-out both; }
+.anim-float { animation: nova-float 3s ease-in-out infinite; }
+.anim-pulse-glow { animation: nova-pulse-glow 2.4s ease-in-out infinite; }
+
+/* Stagger helpers */
+.stagger > * { animation: nova-fade-in 0.4s ease-out both; }
+.stagger > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger > *:nth-child(2) { animation-delay: 0.10s; }
+.stagger > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger > *:nth-child(4) { animation-delay: 0.20s; }
+.stagger > *:nth-child(5) { animation-delay: 0.25s; }
+.stagger > *:nth-child(6) { animation-delay: 0.30s; }
+.stagger > *:nth-child(7) { animation-delay: 0.35s; }
+.stagger > *:nth-child(8) { animation-delay: 0.40s; }
+.stagger > *:nth-child(9) { animation-delay: 0.45s; }
+
+/* ════════════════════════════════════════════
+   SPLASH — Mountain + Dragon intro
+   ════════════════════════════════════════════ */
+
+@keyframes splash-fade-out {
+  0%, 70% { opacity: 1; visibility: visible; }
+  100% { opacity: 0; visibility: hidden; pointer-events: none; }
+}
+@keyframes mountain-rise {
+  from { transform: translateY(60px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+@keyframes mountain-glow {
+  0%, 100% { filter: drop-shadow(0 0 12px hsl(198 92% 54% / 0.4)); }
+  50% { filter: drop-shadow(0 0 32px hsl(198 92% 54% / 0.7)); }
+}
+@keyframes dragon-fly {
+  0% { transform: translate(-200px, 80px) scale(0.5) rotate(-8deg); opacity: 0; }
+  20% { opacity: 1; }
+  50% { transform: translate(20vw, -30px) scale(0.85) rotate(2deg); }
+  80% { opacity: 1; }
+  100% { transform: translate(60vw, -120px) scale(1.1) rotate(-5deg); opacity: 0; }
+}
+@keyframes dragon-wing {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.4); }
+}
+@keyframes star-twinkle {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 1; }
+}
+@keyframes title-reveal {
+  0%, 30% { opacity: 0; transform: translateY(20px); letter-spacing: 0.5em; }
+  100% { opacity: 1; transform: translateY(0); letter-spacing: 0.05em; }
+}
+
+.splash-mountain { animation: mountain-rise 1.2s ease-out both, mountain-glow 3s ease-in-out 1.2s infinite; }
+.splash-dragon { animation: dragon-fly 3.4s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both; }
+.splash-wing { transform-origin: center; animation: dragon-wing 0.18s ease-in-out infinite; }
+.splash-title { animation: title-reveal 1.4s ease-out 1s both; }
+.splash-star { animation: star-twinkle 2s ease-in-out infinite; }
+.splash-fade { animation: splash-fade-out 4.2s ease-in forwards; }
+
+/* Sidebar tooltip helper for icon-only mode */
+.icon-tooltip {
+  pointer-events: none;
+  position: absolute;
+  left: calc(100% + 12px);
+  top: 50%;
+  transform: translateY(-50%) translateX(-6px);
+  opacity: 0;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  background: hsl(220 24% 12%);
+  color: hsl(210 30% 92%);
+  border: 1px solid hsl(198 92% 54% / 0.3);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  z-index: 60;
+}
+.icon-tooltip-trigger:hover .icon-tooltip {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}

@@ -1,0 +1,1439 @@
+openapi: 3.1.0
+info:
+  title: Api
+  version: 0.1.0
+  description: GamePanel API - Game Server & VPS Management
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: auth
+    description: Authentication operations
+  - name: users
+    description: User management
+  - name: nodes
+    description: Node management
+  - name: servers
+    description: Game server management
+  - name: vps
+    description: VPS management
+  - name: allocations
+    description: Allocation management
+  - name: backups
+    description: Backup management
+  - name: dashboard
+    description: Dashboard summary
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginBody"
+      responses:
+        "200":
+          description: Logged in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/register:
+    post:
+      operationId: register
+      tags: [auth]
+      summary: Register
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterBody"
+      responses:
+        "201":
+          description: Registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current user
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Logout
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /dashboard/summary:
+    get:
+      operationId: getDashboardSummary
+      tags: [dashboard]
+      summary: Get dashboard summary stats
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+
+  /dashboard/activity:
+    get:
+      operationId: getRecentActivity
+      tags: [dashboard]
+      summary: Get recent activity feed
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Activity feed
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActivityEvent"
+
+  /users:
+    get:
+      operationId: listUsers
+      tags: [users]
+      summary: List all users
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+    post:
+      operationId: createUser
+      tags: [users]
+      summary: Create a user
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserBody"
+      responses:
+        "201":
+          description: Created user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /users/{id}:
+    get:
+      operationId: getUser
+      tags: [users]
+      summary: Get a user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: User
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+    put:
+      operationId: updateUser
+      tags: [users]
+      summary: Update a user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserBody"
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+    delete:
+      operationId: deleteUser
+      tags: [users]
+      summary: Delete a user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /nodes:
+    get:
+      operationId: listNodes
+      tags: [nodes]
+      summary: List all nodes
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: List of nodes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Node"
+    post:
+      operationId: createNode
+      tags: [nodes]
+      summary: Create a node
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateNodeBody"
+      responses:
+        "201":
+          description: Created node
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Node"
+
+  /nodes/{id}:
+    get:
+      operationId: getNode
+      tags: [nodes]
+      summary: Get a node
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Node
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Node"
+    put:
+      operationId: updateNode
+      tags: [nodes]
+      summary: Update a node
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateNodeBody"
+      responses:
+        "200":
+          description: Updated node
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Node"
+    delete:
+      operationId: deleteNode
+      tags: [nodes]
+      summary: Delete a node
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /nodes/{id}/stats:
+    get:
+      operationId: getNodeStats
+      tags: [nodes]
+      summary: Get node resource stats
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Node stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NodeStats"
+
+  /nodes/{id}/regenerate-token:
+    post:
+      operationId: regenerateNodeToken
+      tags: [nodes]
+      summary: Regenerate node API token
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: New token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NodeTokenResponse"
+
+  /servers:
+    get:
+      operationId: listServers
+      tags: [servers]
+      summary: List game servers
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: List of servers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/GameServer"
+    post:
+      operationId: createServer
+      tags: [servers]
+      summary: Create a game server
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateServerBody"
+      responses:
+        "201":
+          description: Created server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GameServer"
+
+  /servers/{id}:
+    get:
+      operationId: getServer
+      tags: [servers]
+      summary: Get a game server
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GameServer"
+    put:
+      operationId: updateServer
+      tags: [servers]
+      summary: Update a game server
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateServerBody"
+      responses:
+        "200":
+          description: Updated server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GameServer"
+    delete:
+      operationId: deleteServer
+      tags: [servers]
+      summary: Delete a game server
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /servers/{id}/power:
+    post:
+      operationId: serverPowerAction
+      tags: [servers]
+      summary: Send power action to server
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PowerActionBody"
+      responses:
+        "200":
+          description: Action sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /servers/{id}/stats:
+    get:
+      operationId: getServerStats
+      tags: [servers]
+      summary: Get server resource stats
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Server stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceStats"
+
+  /servers/{id}/reinstall:
+    post:
+      operationId: reinstallServer
+      tags: [servers]
+      summary: Reinstall a game server
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Reinstall initiated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /servers/{id}/backups:
+    get:
+      operationId: listServerBackups
+      tags: [backups]
+      summary: List server backups
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of backups
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Backup"
+    post:
+      operationId: createServerBackup
+      tags: [backups]
+      summary: Create a server backup
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "201":
+          description: Backup created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Backup"
+
+  /vps:
+    get:
+      operationId: listVps
+      tags: [vps]
+      summary: List VPS instances
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: List of VPS instances
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/VpsInstance"
+    post:
+      operationId: createVps
+      tags: [vps]
+      summary: Create a VPS instance
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateVpsBody"
+      responses:
+        "201":
+          description: Created VPS
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VpsInstance"
+
+  /vps/{id}:
+    get:
+      operationId: getVps
+      tags: [vps]
+      summary: Get a VPS instance
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: VPS instance
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VpsInstance"
+    delete:
+      operationId: deleteVps
+      tags: [vps]
+      summary: Delete a VPS instance
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /vps/{id}/power:
+    post:
+      operationId: vpsPowerAction
+      tags: [vps]
+      summary: Send power action to VPS
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PowerActionBody"
+      responses:
+        "200":
+          description: Action sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /vps/{id}/reinstall:
+    post:
+      operationId: reinstallVps
+      tags: [vps]
+      summary: Reinstall VPS OS
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReinstallVpsBody"
+      responses:
+        "200":
+          description: Reinstall initiated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /vps/{id}/stats:
+    get:
+      operationId: getVpsStats
+      tags: [vps]
+      summary: Get VPS resource stats
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: VPS stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceStats"
+
+  /allocations:
+    get:
+      operationId: listAllocations
+      tags: [allocations]
+      summary: List port allocations
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: List of allocations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Allocation"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required:
+        - error
+
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+      required:
+        - success
+
+    LoginBody:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required:
+        - email
+        - password
+
+    RegisterBody:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        username:
+          type: string
+        password:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+      required:
+        - email
+        - username
+        - password
+        - firstName
+        - lastName
+
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        user:
+          $ref: "#/components/schemas/User"
+      required:
+        - token
+        - user
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        username:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        role:
+          type: string
+          enum: [admin, user]
+        isActive:
+          type: boolean
+        serverLimit:
+          type: integer
+        vpsLimit:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - email
+        - username
+        - firstName
+        - lastName
+        - role
+        - isActive
+        - serverLimit
+        - vpsLimit
+        - createdAt
+
+    CreateUserBody:
+      type: object
+      properties:
+        email:
+          type: string
+        username:
+          type: string
+        password:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        role:
+          type: string
+          enum: [admin, user]
+        serverLimit:
+          type: integer
+        vpsLimit:
+          type: integer
+      required:
+        - email
+        - username
+        - password
+        - firstName
+        - lastName
+
+    UpdateUserBody:
+      type: object
+      properties:
+        email:
+          type: string
+        username:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        role:
+          type: string
+          enum: [admin, user]
+        isActive:
+          type: boolean
+        serverLimit:
+          type: integer
+        vpsLimit:
+          type: integer
+
+    Node:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        fqdn:
+          type: string
+        ip:
+          type: string
+        port:
+          type: integer
+        isOnline:
+          type: boolean
+        cpuCores:
+          type: integer
+        memoryMb:
+          type: integer
+        diskGb:
+          type: integer
+        location:
+          type: string
+        description:
+          type: string
+        apiToken:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - fqdn
+        - ip
+        - port
+        - isOnline
+        - cpuCores
+        - memoryMb
+        - diskGb
+        - createdAt
+
+    CreateNodeBody:
+      type: object
+      properties:
+        name:
+          type: string
+        fqdn:
+          type: string
+        ip:
+          type: string
+        port:
+          type: integer
+        cpuCores:
+          type: integer
+        memoryMb:
+          type: integer
+        diskGb:
+          type: integer
+        location:
+          type: string
+        description:
+          type: string
+      required:
+        - name
+        - fqdn
+        - ip
+        - port
+        - cpuCores
+        - memoryMb
+        - diskGb
+
+    UpdateNodeBody:
+      type: object
+      properties:
+        name:
+          type: string
+        fqdn:
+          type: string
+        ip:
+          type: string
+        port:
+          type: integer
+        cpuCores:
+          type: integer
+        memoryMb:
+          type: integer
+        diskGb:
+          type: integer
+        location:
+          type: string
+        description:
+          type: string
+
+    NodeStats:
+      type: object
+      properties:
+        cpuUsage:
+          type: number
+        memoryUsed:
+          type: integer
+        memoryTotal:
+          type: integer
+        diskUsed:
+          type: integer
+        diskTotal:
+          type: integer
+        networkIn:
+          type: number
+        networkOut:
+          type: number
+        serverCount:
+          type: integer
+        vpsCount:
+          type: integer
+      required:
+        - cpuUsage
+        - memoryUsed
+        - memoryTotal
+        - diskUsed
+        - diskTotal
+        - networkIn
+        - networkOut
+        - serverCount
+        - vpsCount
+
+    NodeTokenResponse:
+      type: object
+      properties:
+        token:
+          type: string
+      required:
+        - token
+
+    GameServer:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        userId:
+          type: integer
+        nodeId:
+          type: integer
+        status:
+          type: string
+          enum: [installing, running, stopped, starting, stopping, error]
+        gameType:
+          type: string
+        dockerImage:
+          type: string
+        cpuLimit:
+          type: integer
+        memoryMb:
+          type: integer
+        diskMb:
+          type: integer
+        ip:
+          type: string
+        port:
+          type: integer
+        startupCommand:
+          type: string
+        envVariables:
+          type: object
+          additionalProperties:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+        user:
+          $ref: "#/components/schemas/User"
+        node:
+          $ref: "#/components/schemas/Node"
+      required:
+        - id
+        - name
+        - userId
+        - nodeId
+        - status
+        - gameType
+        - dockerImage
+        - cpuLimit
+        - memoryMb
+        - diskMb
+        - ip
+        - port
+        - startupCommand
+        - createdAt
+
+    CreateServerBody:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        userId:
+          type: integer
+        nodeId:
+          type: integer
+        gameType:
+          type: string
+        dockerImage:
+          type: string
+        cpuLimit:
+          type: integer
+        memoryMb:
+          type: integer
+        diskMb:
+          type: integer
+        port:
+          type: integer
+        startupCommand:
+          type: string
+        envVariables:
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - name
+        - userId
+        - nodeId
+        - gameType
+        - dockerImage
+        - cpuLimit
+        - memoryMb
+        - diskMb
+        - startupCommand
+
+    UpdateServerBody:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        cpuLimit:
+          type: integer
+        memoryMb:
+          type: integer
+        diskMb:
+          type: integer
+        startupCommand:
+          type: string
+        envVariables:
+          type: object
+          additionalProperties:
+            type: string
+
+    PowerActionBody:
+      type: object
+      properties:
+        action:
+          type: string
+          enum: [start, stop, restart, kill]
+      required:
+        - action
+
+    ResourceStats:
+      type: object
+      properties:
+        cpuUsage:
+          type: number
+        memoryUsed:
+          type: integer
+        memoryLimit:
+          type: integer
+        diskUsed:
+          type: integer
+        diskLimit:
+          type: integer
+        networkIn:
+          type: number
+        networkOut:
+          type: number
+        uptime:
+          type: integer
+        status:
+          type: string
+      required:
+        - cpuUsage
+        - memoryUsed
+        - memoryLimit
+        - diskUsed
+        - diskLimit
+        - networkIn
+        - networkOut
+        - uptime
+        - status
+
+    Backup:
+      type: object
+      properties:
+        id:
+          type: integer
+        serverId:
+          type: integer
+        name:
+          type: string
+        sizeMb:
+          type: number
+        status:
+          type: string
+          enum: [pending, running, completed, failed]
+        createdAt:
+          type: string
+          format: date-time
+        completedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - serverId
+        - name
+        - sizeMb
+        - status
+        - createdAt
+
+    VpsInstance:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        userId:
+          type: integer
+        nodeId:
+          type: integer
+        status:
+          type: string
+          enum: [installing, running, stopped, starting, stopping, error]
+        osTemplate:
+          type: string
+          enum: [ubuntu-22.04, ubuntu-24.04, debian-12, debian-11, alpine-3.19]
+        cpuCores:
+          type: integer
+        memoryMb:
+          type: integer
+        diskGb:
+          type: integer
+        ipAddress:
+          type: string
+        username:
+          type: string
+        sshPort:
+          type: integer
+        containerId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        user:
+          $ref: "#/components/schemas/User"
+        node:
+          $ref: "#/components/schemas/Node"
+      required:
+        - id
+        - name
+        - userId
+        - nodeId
+        - status
+        - osTemplate
+        - cpuCores
+        - memoryMb
+        - diskGb
+        - ipAddress
+        - username
+        - sshPort
+        - createdAt
+
+    CreateVpsBody:
+      type: object
+      properties:
+        name:
+          type: string
+        userId:
+          type: integer
+        nodeId:
+          type: integer
+        osTemplate:
+          type: string
+          enum: [ubuntu-22.04, ubuntu-24.04, debian-12, debian-11, alpine-3.19]
+        cpuCores:
+          type: integer
+        memoryMb:
+          type: integer
+        diskGb:
+          type: integer
+      required:
+        - name
+        - userId
+        - nodeId
+        - osTemplate
+        - cpuCores
+        - memoryMb
+        - diskGb
+
+    ReinstallVpsBody:
+      type: object
+      properties:
+        osTemplate:
+          type: string
+          enum: [ubuntu-22.04, ubuntu-24.04, debian-12, debian-11, alpine-3.19]
+      required:
+        - osTemplate
+
+    Allocation:
+      type: object
+      properties:
+        id:
+          type: integer
+        nodeId:
+          type: integer
+        ip:
+          type: string
+        port:
+          type: integer
+        serverId:
+          type: integer
+        isAssigned:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - nodeId
+        - ip
+        - port
+        - isAssigned
+        - createdAt
+
+    DashboardSummary:
+      type: object
+      properties:
+        totalServers:
+          type: integer
+        runningServers:
+          type: integer
+        stoppedServers:
+          type: integer
+        totalVps:
+          type: integer
+        runningVps:
+          type: integer
+        totalNodes:
+          type: integer
+        onlineNodes:
+          type: integer
+        totalUsers:
+          type: integer
+        totalBackups:
+          type: integer
+        totalDiskUsedGb:
+          type: number
+      required:
+        - totalServers
+        - runningServers
+        - stoppedServers
+        - totalVps
+        - runningVps
+        - totalNodes
+        - onlineNodes
+        - totalUsers
+        - totalBackups
+        - totalDiskUsedGb
+
+    ActivityEvent:
+      type: object
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+        description:
+          type: string
+        userId:
+          type: integer
+        username:
+          type: string
+        resourceId:
+          type: integer
+        resourceType:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - type
+        - description
+        - createdAt

@@ -1,0 +1,14 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "VOtSu3dJmMe2Vre8HnnyA"
+uri = "file://INSTALL.md"
+type = "text"
+title = "Nova Panel — Installation Guide"
+
+[[outputs]]
+id = "m-wWUWaFlHmRnPzlZ3q45"
+uri = "file://nova-panel-source.zip"
+type = "unspecified"
+title = "Nova Panel — Ready to Deploy (391KB)"
