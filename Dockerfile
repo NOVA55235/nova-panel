@@ -18,7 +18,7 @@ COPY artifacts/api-server/package.json artifacts/api-server/
 COPY artifacts/panel/package.json      artifacts/panel/
 COPY scripts/package.json              scripts/
 
-RUN pnpm install --frozen-lockfile --ignore-scripts
+RUN pnpm install --no-frozen-lockfile --ignore-scripts
 
 # ── Stage 2: build shared libs ────────────────────────────────
 FROM deps AS lib-builder
