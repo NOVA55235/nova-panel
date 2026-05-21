@@ -35,7 +35,7 @@ FROM lib-builder AS panel-builder
 WORKDIR /app
 
 COPY artifacts/panel/ artifacts/panel/
-RUN pnpm --filter @workspace/panel run build
+RUN PORT=3000 BASE_PATH=/ NODE_ENV=production pnpm --filter @workspace/panel run build
 
 # ── Stage 4: build the Express API ───────────────────────────
 FROM lib-builder AS api-builder
