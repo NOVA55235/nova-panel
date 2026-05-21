@@ -7,7 +7,7 @@
 #   chmod +x install.sh && ./install.sh
 ################################################################
 
-set -e
+set -eo pipefail
 
 RED='\033[0;31m'; GREEN='\033[0;32m'; CYAN='\033[0;36m'
 YELLOW='\033[1;33m'; BOLD='\033[1m'; NC='\033[0m'
@@ -53,32 +53,44 @@ if ! docker compose version &>/dev/null; then
 fi
 success "Docker Compose: $(docker compose version --short)"
 
-# ── 4. Create install directory ──────────────────────────────
+# ── 4. Install git if missing ────────────────────────────────
+if ! command -v git &>/dev/null; then
+  info "Installing git..."
+  apt-get install -y git 2>/dev/null || yum install -y git 2>/dev/null || error "Could not install git. Please install it manually."
+fi
+
+# ── 5. Create install directory ──────────────────────────────
 INSTALL_DIR="${NOVA_DIR:-/opt/nova-panel}"
 info "Installing to: $INSTALL_DIR"
 mkdir -p "$INSTALL_DIR"
 cd "$INSTALL_DIR"
 
-# ── 5. Clone or pull repo ────────────────────────────────────
+# ── 6. Clone or pull repo ────────────────────────────────────
 REPO_URL="${NOVA_REPO:-https://github.com/NOVA55235/nova-panel.git}"
 
 if [[ -d ".git" ]]; then
   info "Repo already exists — pulling latest..."
-  git pull
+  git pull || error "git pull failed. Check your internet connection."
 else
   info "Cloning Nova Panel..."
-  git clone "$REPO_URL" . 2>/dev/null || {
-    warn "Could not clone — using files in current directory."
-  }
+  git clone "$REPO_URL" . || error "Failed to clone repo from $REPO_URL. Check your internet connection."
+  success "Repo cloned."
 fi
 
-# ── 6. Configure .env ────────────────────────────────────────
+# ── 7. Verify source files exist ─────────────────────────────
+if [[ ! -f "Dockerfile" ]]; then
+  error "Dockerfile not found in $INSTALL_DIR. The clone may have failed."
+fi
+if [[ ! -d "artifacts/panel" ]]; then
+  error "artifacts/panel not found. The repo may be incomplete — try deleting $INSTALL_DIR and running again."
+fi
+success "Source files verified."
+
+# ── 8. Configure .env ────────────────────────────────────────
 if [[ ! -f ".env" ]]; then
   cp .env.docker .env
 
-  # Generate a random secret
   SECRET=$(openssl rand -hex 32 2>/dev/null || cat /dev/urandom | tr -dc 'a-f0-9' | head -c 64)
-  # Generate a random DB password
   DBPASS=$(openssl rand -hex 16 2>/dev/null || cat /dev/urandom | tr -dc 'a-zA-Z0-9' | head -c 24)
 
   sed -i "s/changeme_strong_password/$DBPASS/g" .env
@@ -96,20 +108,22 @@ else
   warn ".env already exists — skipping config generation."
 fi
 
-# ── 7. Create nginx ssl directory ───────────────────────────
+# ── 9. Create nginx ssl directory ───────────────────────────
 mkdir -p nginx/ssl
 
-# ── 8. Build Docker image ────────────────────────────────────
+# ── 10. Build Docker image ───────────────────────────────────
 info "Building Nova Panel Docker image (this takes ~2 minutes)..."
-docker build -t nova-panel:latest . 2>&1 | tail -5
+if ! docker build -t nova-panel:latest .; then
+  error "Docker build failed. Check the output above for details."
+fi
 success "Image built."
 
-# ── 9. Start services ────────────────────────────────────────
+# ── 11. Start services ───────────────────────────────────────
 info "Starting all services..."
 docker compose up -d
 success "Nova Panel is running!"
 
-# ── 10. Done ─────────────────────────────────────────────────
+# ── 12. Done ─────────────────────────────────────────────────
 IP=$(hostname -I | awk '{print $1}')
 echo ""
 echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
